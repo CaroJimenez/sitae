@@ -4,10 +4,11 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServlet;
@@ -41,15 +42,37 @@ public class FileUploadHandler extends HttpServlet {
             while (it.hasNext()) {
                 FileItem fileItem = it.next();
                 boolean isFormField = fileItem.isFormField();
+                System.out.println("File item: "+fileItem);
                 if (isFormField) {
                     if (file_name == null) {
                         if (fileItem.getFieldName().equals("file_name")) {
                             file_name = fileItem.getString();
+                            System.out.println("file name: "+file_name );
                         }
                     }
                 } else {
+
+                    InputStream fileContent = fileItem.getInputStream();
+                    int i;
+                    String temp = "";
+                    ArrayList<String> materias = new ArrayList<String>();
+                    while(( i = fileContent.read())!=-1) {
+
+                        // prints character
+                        temp += ""+(char) i;
+                        System.out.print((char) i );
+
+                        if((char)i=='\n'){
+                            materias.add(temp);
+                            temp = "";
+                        }
+
+
+                    }
+                    System.out.println("materia 1: "+materias.get(0));
+
                     if (fileItem.getSize() > 0) {
-                        fileItem.write(new File("/Users/carolinacorcino/Documents/uploads" + fileItem.getName()));
+                        fileItem.write(new File("/Users/carolinacorcino/Documents/uploads/" + fileItem.getName()));
                     }
                 }
             }
